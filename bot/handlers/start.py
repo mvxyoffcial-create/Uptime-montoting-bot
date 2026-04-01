@@ -15,12 +15,12 @@ from bot.filters.fsub import check_fsub
 def build_start_buttons():
     return InlineKeyboardMarkup([
         [
-            InlineKeyboardButton("📊 My URLs", callback_data="my_urls"),
-            InlineKeyboardButton("➕ Add URL", callback_data="add_url_prompt"),
-        ],
-        [
             InlineKeyboardButton("ℹ️ Help", callback_data="help"),
             InlineKeyboardButton("👾 About", callback_data="about"),
+        ],
+        [
+            InlineKeyboardButton("💎 Premium", callback_data="premium_info"),
+            InlineKeyboardButton("📊 My Plan", callback_data="myplan_cb"),
         ],
         [
             InlineKeyboardButton("📢 Channel 1", url="https://t.me/zerodev2"),
@@ -188,6 +188,53 @@ def register_start_handlers(app: Client):
         me = await client.get_me()
         await query.message.edit_caption(
             caption=ABOUT_TXT.format(me.first_name),
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🏠 Home", callback_data="home")]]),
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("📦 Source Code", url="https://github.com/Venuboyy")],
+                [InlineKeyboardButton("🏠 Home", callback_data="home")],
+            ]),
             parse_mode=enums.ParseMode.HTML,
         )
+
+    @app.on_callback_query(filters.regex("^myplan_cb$"))
+    async def myplan_cb(client: Client, query: CallbackQuery):
+        from bot.database.db import get_user as _get_user
+        import pytz, datetime
+        user = query.from_user
+        data = await _get_user(user.id)
+        IST = pytz.timezone("Asia/Kolkata")
+        if data and data.get("expiry_time"):
+            expiry = data["expiry_time"]
+            expiry_str = expiry.astimezone(IST).strftime("%d-%m-%Y | %I:%M:%S %p")
+            now = datetime.datetime.now(IST)
+            delta = expiry.astimezone(IST) - now
+            days = delta.days
+            hours, rem = divmod(delta.seconds, 3600)
+            minutes, _ = divmod(rem, 60)
+            caption = (
+                f"⚜️ <b>ᴘʀᴇᴍɪᴜᴍ ᴜꜱᴇʀ ᴅᴀᴛᴀ :</b>\n\n"
+                f"👤 <b>ᴜꜱᴇʀ :</b> {user.mention}\n"
+                f"⚡ <b>ᴜꜱᴇʀ ɪᴅ :</b> <code>{user.id}</code>\n"
+                f"⏰ <b>ᴛɪᴍᴇ ʟᴇꜰᴛ :</b> {days}d {hours}h {minutes}m\n"
+                f"⌛️ <b>ᴇxᴘɪʀʏ :</b> {expiry_str}"
+            )
+            await query.message.edit_caption(
+                caption=caption,
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton("🔥 ᴇxᴛᴇɴᴅ ᴘʟᴀɴ", callback_data="premium_info")],
+                    [InlineKeyboardButton("🏠 Home", callback_data="home")],
+                ]),
+                parse_mode=enums.ParseMode.HTML,
+            )
+        else:
+            await query.message.edit_caption(
+                caption=(
+                    f"<b>ʜᴇʏ {user.mention},\n\n"
+                    f"ʏᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴀɴ ᴀᴄᴛɪᴠᴇ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴ.\n"
+                    f"ʙᴜʏ ᴀ ᴘʟᴀɴ ᴛᴏ ᴇɴᴊᴏʏ ᴜɴʟɪᴍɪᴛᴇᴅ ᴍᴏɴɪᴛᴏʀɪɴɢ! 🚀</b>"
+                ),
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton("💎 ʙᴜʏ ᴘʀᴇᴍɪᴜᴍ", callback_data="premium_info")],
+                    [InlineKeyboardButton("🏠 Home", callback_data="home")],
+                ]),
+                parse_mode=enums.ParseMode.HTML,
+            )
