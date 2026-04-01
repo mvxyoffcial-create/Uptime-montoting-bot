@@ -1,3 +1,4 @@
+from pyrogram import enums
 import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import Message
@@ -15,7 +16,7 @@ def owner_only(func):
     """Decorator: restricts command to OWNER_ID only."""
     async def wrapper(client, message):
         if message.from_user.id != OWNER_ID:
-            await message.reply("⛔ <b>Admin only command.</b>", parse_mode="html")
+            await message.reply("⛔ <b>Admin only command.</b>", parse_mode=enums.ParseMode.HTML)
             return
         return await func(client, message)
     wrapper.__name__ = func.__name__
@@ -39,7 +40,7 @@ def register_admin_handlers(app: Client):
             f"🟢 <b>Active:</b> <code>{active_urls}</code>\n"
             f"⏸ <b>Paused:</b> <code>{paused_urls}</code>\n"
         )
-        await message.reply(text, parse_mode="html")
+        await message.reply(text, parse_mode=enums.ParseMode.HTML)
 
     @app.on_message(filters.command("broadcast") & filters.private)
     @owner_only
@@ -49,7 +50,7 @@ def register_admin_handlers(app: Client):
                 "📢 <b>Broadcast Usage:</b>\n\n"
                 "Reply to any message with /broadcast to send it to all users.\n\n"
                 "Supports: text, photo, video, document, sticker, animation",
-                parse_mode="html"
+                parse_mode=enums.ParseMode.HTML
             )
             return
 
@@ -58,7 +59,7 @@ def register_admin_handlers(app: Client):
         sent = 0
         failed = 0
 
-        status_msg = await message.reply(f"📤 Broadcasting to <b>{total}</b> users...", parse_mode="html")
+        status_msg = await message.reply(f"📤 Broadcasting to <b>{total}</b> users...", parse_mode=enums.ParseMode.HTML)
         msg = message.reply_to_message
 
         for user in users:
@@ -83,7 +84,7 @@ def register_admin_handlers(app: Client):
             f"📤 Sent: <code>{sent}</code>\n"
             f"❌ Failed: <code>{failed}</code>\n"
             f"👥 Total: <code>{total}</code>",
-            parse_mode="html"
+            parse_mode=enums.ParseMode.HTML
         )
 
     @app.on_message(filters.command("premium") & filters.private)
@@ -96,19 +97,19 @@ def register_admin_handlers(app: Client):
                 "👑 <b>Premium Management</b>\n\n"
                 "Usage: <code>/premium &lt;user_id&gt; on|off</code>\n\n"
                 "Example: <code>/premium 123456789 on</code>",
-                parse_mode="html"
+                parse_mode=enums.ParseMode.HTML
             )
             return
 
         try:
             target_id = int(args[1])
         except ValueError:
-            await message.reply("❌ Invalid user ID.", parse_mode="html")
+            await message.reply("❌ Invalid user ID.", parse_mode=enums.ParseMode.HTML)
             return
 
         action = args[2].lower()
         if action not in ("on", "off"):
-            await message.reply("❌ Use <code>on</code> or <code>off</code>.", parse_mode="html")
+            await message.reply("❌ Use <code>on</code> or <code>off</code>.", parse_mode=enums.ParseMode.HTML)
             return
 
         status = action == "on"
@@ -117,7 +118,7 @@ def register_admin_handlers(app: Client):
         label = "granted ✅" if status else "removed ❌"
         await message.reply(
             f"👑 <b>Premium {label}</b> for user <code>{target_id}</code>",
-            parse_mode="html"
+            parse_mode=enums.ParseMode.HTML
         )
 
         # Notify the user
@@ -127,7 +128,7 @@ def register_admin_handlers(app: Client):
                 if status else
                 "ℹ️ Your premium access has been removed. You are now on the free plan (5 URLs max)."
             )
-            await client.send_message(target_id, notif, parse_mode="html")
+            await client.send_message(target_id, notif, parse_mode=enums.ParseMode.HTML)
         except Exception:
             pass
 
@@ -138,7 +139,7 @@ def register_admin_handlers(app: Client):
         users = await get_all_users()
         count = len(users)
         if not users:
-            await message.reply("No users yet.", parse_mode="html")
+            await message.reply("No users yet.", parse_mode=enums.ParseMode.HTML)
             return
 
         lines = [f"👥 <b>All Users ({count})</b>\n"]
@@ -150,7 +151,7 @@ def register_admin_handlers(app: Client):
         if count > 30:
             lines.append(f"\n...and {count - 30} more.")
 
-        await message.reply("\n".join(lines), parse_mode="html")
+        await message.reply("\n".join(lines), parse_mode=enums.ParseMode.HTML)
 
     @app.on_message(filters.command("userinfo") & filters.private)
     @owner_only
@@ -158,17 +159,17 @@ def register_admin_handlers(app: Client):
         """Admin: get info about a specific user."""
         args = message.text.split(maxsplit=1)
         if len(args) < 2:
-            await message.reply("Usage: /userinfo <user_id>", parse_mode="html")
+            await message.reply("Usage: /userinfo <user_id>", parse_mode=enums.ParseMode.HTML)
             return
         try:
             uid = int(args[1])
         except ValueError:
-            await message.reply("❌ Invalid user ID.", parse_mode="html")
+            await message.reply("❌ Invalid user ID.", parse_mode=enums.ParseMode.HTML)
             return
 
         user = await get_user(uid)
         if not user:
-            await message.reply("User not found in DB.", parse_mode="html")
+            await message.reply("User not found in DB.", parse_mode=enums.ParseMode.HTML)
             return
 
         url_count = await get_url_count(uid)
@@ -181,4 +182,4 @@ def register_admin_handlers(app: Client):
             f"🔗 URLs: <code>{url_count}</code>\n"
             f"📅 Joined: {user.get('joined', '—')}"
         )
-        await message.reply(text, parse_mode="html")
+        await message.reply(text, parse_mode=enums.ParseMode.HTML)
