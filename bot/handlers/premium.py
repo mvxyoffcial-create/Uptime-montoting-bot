@@ -7,8 +7,8 @@ from pyrogram.errors.exceptions.bad_request_400 import MessageTooLong
 from pyrogram.types import (
     Message, CallbackQuery,
     InlineKeyboardMarkup, InlineKeyboardButton,
-    LabeledPrice,
 )
+from pyrogram.types.bots_and_keyboards import LabeledPrice
 
 from script import script
 from config import ADMINS, PREMIUM_LOGS, STAR_PREMIUM_PLANS, SUBSCRIPTION_IMG, WELCOME_IMAGE
