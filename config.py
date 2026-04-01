@@ -47,11 +47,7 @@ WORKERS = 500
 WELCOME_STICKER = "CAACAgIAAxkBAAEQZtFpgEdROhGouBVFD3e0K-YjmVHwsgACtCMAAphLKUjeub7NKlvk2TgE"
 
 # Welcome image
-WELCOME_IMAGE = [
-    "https://i.ibb.co/Xf95qxtr/img-8108646188.jpg",
-    "https://i.ibb.co/xthjWvZm/img-8108646188.jpg",
-    "https://i.ibb.co/B2FZVtCT/img-8108646188.jpg"
-]
+WELCOME_IMAGE = "https://i.ibb.co/Xf95qxtr/img-8108646188.jpg"
 
 # Anime wallpaper API (random girl wallpaper)
 ANIME_API = "https://api.aniwallpaper.workers.dev/random?type=girl"
