@@ -101,10 +101,18 @@ def register_monitor_handlers(app: Client):
             if not await check_fsub(client, message):
                 return
             await message.reply(
-                f"🔗 <b>Detected URL!</b>\n\n<code>{text}</code>\n\nDo you want to monitor this?",
+                f"🔗 <b>URL Detected!</b>\n\n"
+                f"<code>{text}</code>\n\n"
+                f"➤ Tap <b>✅ Add & Monitor</b> to start monitoring\n"
+                f"➤ Tap <b>📊 My URLs</b> to view your list\n"
+                f"➤ Tap <b>🏓 Ping</b> to test it once",
                 reply_markup=InlineKeyboardMarkup([
                     [
-                        InlineKeyboardButton("✅ Monitor It", callback_data=f"confirm_add:{text}"),
+                        InlineKeyboardButton("✅ Add & Monitor", callback_data=f"confirm_add:{text}"),
+                        InlineKeyboardButton("🏓 Ping Only", callback_data=f"ping_only:{text}"),
+                    ],
+                    [
+                        InlineKeyboardButton("📊 My URLs", callback_data="my_urls"),
                         InlineKeyboardButton("❌ Cancel", callback_data="cancel_add"),
                     ]
                 ]),
@@ -301,6 +309,30 @@ def register_monitor_handlers(app: Client):
         url = query.data.split(":", 1)[1]
         user_id = query.from_user.id
         await _process_add_url_cb(client, query, user_id, url)
+
+    @app.on_callback_query(filters.regex(r"^ping_only:(.+)$"))
+    async def ping_only_cb(client: Client, query: CallbackQuery):
+        url = query.data.split(":", 1)[1]
+        await query.answer("⏳ Pinging...")
+        code, ms = await ping_url(url)
+        if code:
+            icon = "🟢" if 200 <= code < 400 else "🔴"
+            text = (
+                f"{icon} <b>Ping Result</b>\n\n"
+                f"🔗 <code>{url}</code>\n"
+                f"📶 Status: <code>{code}</code>\n"
+                f"⚡ Response: <code>{ms}ms</code>"
+            )
+        else:
+            text = f"🔴 <b>Unreachable</b>\n\n<code>{url}</code>\n\nFailed to connect or timed out."
+        await query.message.edit_text(
+            text,
+            parse_mode=enums.ParseMode.HTML,
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("✅ Add & Monitor", callback_data=f"confirm_add:{url}")],
+                [InlineKeyboardButton("❌ Close", callback_data="cancel_add")],
+            ])
+        )
 
     @app.on_callback_query(filters.regex("^cancel_add$"))
     async def cancel_add_cb(client: Client, query: CallbackQuery):
