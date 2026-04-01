@@ -1,3 +1,4 @@
+from pyrogram import enums
 import asyncio
 import aiohttp
 from pyrogram import Client, filters
@@ -77,7 +78,7 @@ def register_start_handlers(app: Client):
             photo=image_url,
             caption=caption,
             reply_markup=build_start_buttons(),
-            parse_mode="html",
+            parse_mode=enums.ParseMode.HTML,
         )
 
     @app.on_message(filters.command("start") & filters.group)
@@ -94,7 +95,7 @@ def register_start_handlers(app: Client):
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("💬 Start in DM", url=f"https://t.me/{(await client.get_me()).username}?start=go")]
             ]),
-            parse_mode="html",
+            parse_mode=enums.ParseMode.HTML,
         )
 
     @app.on_message(filters.command("help") & filters.private)
@@ -107,7 +108,7 @@ def register_start_handlers(app: Client):
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("🏠 Home", callback_data="home")]
             ]),
-            parse_mode="html",
+            parse_mode=enums.ParseMode.HTML,
         )
 
     @app.on_message(filters.command("about") & filters.private)
@@ -121,7 +122,7 @@ def register_start_handlers(app: Client):
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("🏠 Home", callback_data="home")]
             ]),
-            parse_mode="html",
+            parse_mode=enums.ParseMode.HTML,
         )
 
     # ─── Callback Queries ───
@@ -158,7 +159,7 @@ def register_start_handlers(app: Client):
                 photo=image_url,
                 caption=START_TXT.format(user.first_name, "🌸"),
                 reply_markup=build_start_buttons(),
-                parse_mode="html",
+                parse_mode=enums.ParseMode.HTML,
             )
 
     @app.on_callback_query(filters.regex("^home$"))
@@ -169,7 +170,7 @@ def register_start_handlers(app: Client):
             media=__import__("pyrogram.types", fromlist=["InputMediaPhoto"]).InputMediaPhoto(
                 media=image_url,
                 caption=START_TXT.format(user.first_name, "🌸"),
-                parse_mode="html",
+                parse_mode=enums.ParseMode.HTML,
             )
         )
         await query.message.edit_reply_markup(reply_markup=build_start_buttons())
@@ -179,7 +180,7 @@ def register_start_handlers(app: Client):
         await query.message.edit_caption(
             caption=HELP_TXT,
             reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🏠 Home", callback_data="home")]]),
-            parse_mode="html",
+            parse_mode=enums.ParseMode.HTML,
         )
 
     @app.on_callback_query(filters.regex("^about$"))
@@ -188,5 +189,5 @@ def register_start_handlers(app: Client):
         await query.message.edit_caption(
             caption=ABOUT_TXT.format(me.first_name),
             reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🏠 Home", callback_data="home")]]),
-            parse_mode="html",
+            parse_mode=enums.ParseMode.HTML,
         )
