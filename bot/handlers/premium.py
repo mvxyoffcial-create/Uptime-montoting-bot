@@ -1,3 +1,4 @@
+from pyrogram import enums
 import pytz
 import asyncio
 import datetime
@@ -85,7 +86,7 @@ def register_premium_handlers(app: Client):
             await client.send_message(
                 chat_id=user_id,
                 text=script.PREMIUM_END_TEXT.format(user.mention),
-                parse_mode="html",
+                parse_mode=enums.ParseMode.HTML,
             )
         else:
             await message.reply(
@@ -113,7 +114,7 @@ def register_premium_handlers(app: Client):
                 await message.reply_photo(
                     photo=SUBSCRIPTION_IMG,
                     caption=caption,
-                    parse_mode="html",
+                    parse_mode=enums.ParseMode.HTML,
                     reply_markup=InlineKeyboardMarkup(
                         [[InlineKeyboardButton("🔥 ᴇxᴛᴇɴᴅ ᴘʟᴀɴ", callback_data="premium_info")]]
                     ),
@@ -126,7 +127,7 @@ def register_premium_handlers(app: Client):
                         f"ʏᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴀɴ ᴀᴄᴛɪᴠᴇ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴ.\n"
                         f"ʙᴜʏ ᴏᴜʀ ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ ᴛᴏ ᴇɴᴊᴏʏ ᴘʀᴇᴍɪᴜᴍ ʙᴇɴᴇꜰɪᴛꜱ.</b>"
                     ),
-                    parse_mode="html",
+                    parse_mode=enums.ParseMode.HTML,
                     reply_markup=InlineKeyboardMarkup(
                         [[InlineKeyboardButton("💎 ᴄʜᴇᴄᴋᴏᴜᴛ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴꜱ", callback_data="premium_info")]]
                     ),
@@ -151,7 +152,7 @@ def register_premium_handlers(app: Client):
                 f"⚡ ᴜꜱᴇʀ ɪᴅ : <code>{user_id}</code>\n"
                 f"⏰ ᴛɪᴍᴇ ʟᴇꜰᴛ : {_time_left_str(expiry)}\n"
                 f"⌛️ ᴇxᴘɪʀʏ ᴅᴀᴛᴇ : {_fmt_expiry(expiry)}",
-                parse_mode="html",
+                parse_mode=enums.ParseMode.HTML,
             )
         else:
             await message.reply("ɴᴏ ᴘʀᴇᴍɪᴜᴍ ᴅᴀᴛᴀ ꜰᴏᴜɴᴅ ɪɴ ᴅᴀᴛᴀʙᴀꜱᴇ !")
@@ -164,7 +165,7 @@ def register_premium_handlers(app: Client):
                 "📌 ᴜsᴀɢᴇ: <code>/add_premium user_id amount unit</code>\n"
                 "📅 ᴇxᴀᴍᴘʟᴇ: <code>/add_premium 123456 1 month</code>\n"
                 "🧭 ᴀᴄᴄᴇᴘᴛᴇᴅ: <code>day hour min month year</code>",
-                parse_mode="html",
+                parse_mode=enums.ParseMode.HTML,
             )
             return
 
@@ -178,7 +179,7 @@ def register_premium_handlers(app: Client):
                 "❌ ɪɴᴠᴀʟɪᴅ ᴛɪᴍᴇ ꜰᴏʀᴍᴀᴛ ❗\n"
                 "🕒 ᴜꜱᴇ: <code>1 day</code>, <code>1 hour</code>, <code>1 min</code>, "
                 "<code>1 month</code>, or <code>1 year</code>",
-                parse_mode="html",
+                parse_mode=enums.ParseMode.HTML,
             )
             return
 
@@ -197,7 +198,7 @@ def register_premium_handlers(app: Client):
             f"⏰ ᴘʀᴇᴍɪᴜᴍ ᴀᴄᴄᴇꜱꜱ : <code>{time_str}</code>\n\n"
             f"⏳ ᴊᴏɪɴɪɴɢ ᴅᴀᴛᴇ : {now_ist}\n\n"
             f"⌛️ ᴇxᴘɪʀʏ ᴅᴀᴛᴇ : {expiry_str}",
-            parse_mode="html",
+            parse_mode=enums.ParseMode.HTML,
             disable_web_page_preview=True,
         )
         await client.send_message(
@@ -207,7 +208,7 @@ def register_premium_handlers(app: Client):
             f"⏰ ᴘʀᴇᴍɪᴜᴍ ᴀᴄᴄᴇꜱꜱ : <code>{time_str}</code>\n"
             f"⏳ ᴊᴏɪɴɪɴɢ ᴅᴀᴛᴇ : {now_ist}\n\n"
             f"⌛️ ᴇxᴘɪʀʏ ᴅᴀᴛᴇ : {expiry_str}",
-            parse_mode="html",
+            parse_mode=enums.ParseMode.HTML,
             disable_web_page_preview=True,
         )
         if PREMIUM_LOGS:
@@ -219,14 +220,14 @@ def register_premium_handlers(app: Client):
                 f"⏰ ᴘʀᴇᴍɪᴜᴍ ᴀᴄᴄᴇꜱꜱ : <code>{time_str}</code>\n\n"
                 f"⏳ ᴊᴏɪɴɪɴɢ ᴅᴀᴛᴇ : {now_ist}\n\n"
                 f"⌛️ ᴇxᴘɪʀʏ ᴅᴀᴛᴇ : {expiry_str}",
-                parse_mode="html",
+                parse_mode=enums.ParseMode.HTML,
                 disable_web_page_preview=True,
             )
 
     # ── /premium_users (admin) ────────────────────────────────────────────────
     @app.on_message(filters.command("premium_users") & filters.user(ADMINS))
     async def premium_users_cmd(client: Client, message: Message):
-        aa = await message.reply("<i>ꜰᴇᴛᴄʜɪɴɢ...</i>", parse_mode="html")
+        aa = await message.reply("<i>ꜰᴇᴛᴄʜɪɴɢ...</i>", parse_mode=enums.ParseMode.HTML)
         text = "⚜️ ᴘʀᴇᴍɪᴜᴍ ᴜꜱᴇʀꜱ ʟɪꜱᴛ :\n\n"
         count = 1
         async for user_doc in get_all_users():
@@ -251,7 +252,7 @@ def register_premium_handlers(app: Client):
             await aa.edit_text("ɴᴏ ᴘʀᴇᴍɪᴜᴍ ᴜꜱᴇʀꜱ ꜰᴏᴜɴᴅ.")
             return
         try:
-            await aa.edit_text(text, parse_mode="html")
+            await aa.edit_text(text, parse_mode=enums.ParseMode.HTML)
         except MessageTooLong:
             with open("usersplan.txt", "w+") as f:
                 f.write(text)
@@ -265,7 +266,7 @@ def register_premium_handlers(app: Client):
         msg = await message.reply_photo(
             photo=SUBSCRIPTION_IMG,
             caption=script.BPREMIUM_TXT,
-            parse_mode="html",
+            parse_mode=enums.ParseMode.HTML,
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("• ʙᴜʏ ᴘʀᴇᴍɪᴜᴍ •", callback_data="buy_info")],
                 [InlineKeyboardButton("🚫 ᴄʟᴏꜱᴇ 🚫", callback_data="close_data")],
@@ -276,7 +277,7 @@ def register_premium_handlers(app: Client):
                 PREMIUM_LOGS,
                 f"<b><u>🚫 ᴛʜɪs ᴜꜱᴇʀ ᴛʀɪᴇᴅ /plan</u> {temp.B_LINK}\n\n"
                 f"- ɪᴅ - <code>{user_id}</code>\n- ɴᴀᴍᴇ - {users}</b>",
-                parse_mode="html",
+                parse_mode=enums.ParseMode.HTML,
             )
         await asyncio.sleep(300)
         try:
@@ -292,7 +293,7 @@ def register_premium_handlers(app: Client):
         await query.message.reply_photo(
             photo=SUBSCRIPTION_IMG,
             caption=script.BPREMIUM_TXT,
-            parse_mode="html",
+            parse_mode=enums.ParseMode.HTML,
             reply_markup=_plan_buttons(),
         )
 
@@ -361,7 +362,7 @@ def register_premium_handlers(app: Client):
                 f"⭐ ꜱᴛᴀʀꜱ ᴘᴀɪᴅ : {amount}\n"
                 f"⏰ ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ : {time_str}\n"
                 f"⌛️ ᴇxᴘɪʀᴇꜱ : {expiry_str}",
-                parse_mode="html",
+                parse_mode=enums.ParseMode.HTML,
                 disable_web_page_preview=True,
             )
 
@@ -375,7 +376,7 @@ def register_premium_handlers(app: Client):
                     f"⏰ ᴘʀᴇᴍɪᴜᴍ ᴀᴄᴄᴇꜱꜱ : {time_str}\n"
                     f"⏳ ᴊᴏɪɴɪɴɢ : {now_ist}\n"
                     f"⌛️ ᴇxᴘɪʀʏ : {expiry_str}",
-                    parse_mode="html",
+                    parse_mode=enums.ParseMode.HTML,
                     disable_web_page_preview=True,
                 )
 
