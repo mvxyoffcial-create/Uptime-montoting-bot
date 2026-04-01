@@ -1,3 +1,4 @@
+from pyrogram import enums
 from pyrogram import Client
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import FSUB_CHANNELS, OWNER_ID
@@ -35,7 +36,7 @@ async def check_fsub(client: Client, message: Message) -> bool:
                 "👇 Click below to join, then tap <b>I've Joined</b>."
             ),
             reply_markup=InlineKeyboardMarkup(buttons),
-            parse_mode="html",
+            parse_mode=enums.ParseMode.HTML,
         )
         return False
 
