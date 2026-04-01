@@ -1,3 +1,4 @@
+from pyrogram import enums
 import aiohttp
 import time
 from pyrogram import Client, filters
@@ -70,7 +71,7 @@ def register_monitor_handlers(app: Client):
             await message.reply(
                 "📎 <b>Send me the URL you want to monitor:</b>\n\n"
                 "Example: <code>https://mybot.example.com</code>",
-                parse_mode="html"
+                parse_mode=enums.ParseMode.HTML
             )
             return
 
@@ -92,7 +93,7 @@ def register_monitor_handlers(app: Client):
             if text.startswith("http://") or text.startswith("https://"):
                 await _process_add_url(client, message, user_id, text)
             else:
-                await message.reply("❌ Invalid URL. Please send a valid URL starting with <code>http://</code> or <code>https://</code>.", parse_mode="html")
+                await message.reply("❌ Invalid URL. Please send a valid URL starting with <code>http://</code> or <code>https://</code>.", parse_mode=enums.ParseMode.HTML)
             return
 
         # Auto-detect URL in message
@@ -107,7 +108,7 @@ def register_monitor_handlers(app: Client):
                         InlineKeyboardButton("❌ Cancel", callback_data="cancel_add"),
                     ]
                 ]),
-                parse_mode="html"
+                parse_mode=enums.ParseMode.HTML
             )
 
     @app.on_message(filters.command("urls") & filters.private)
@@ -119,14 +120,14 @@ def register_monitor_handlers(app: Client):
         if not urls:
             await message.reply(
                 "📭 <b>You have no monitored URLs yet.</b>\n\nSend a URL or use /add to start!",
-                parse_mode="html"
+                parse_mode=enums.ParseMode.HTML
             )
             return
         await message.reply_photo(
             photo=WELCOME_IMAGE,
             caption=f"📊 <b>Your Monitored URLs</b> — {len(urls)} total",
             reply_markup=url_list_keyboard(urls),
-            parse_mode="html"
+            parse_mode=enums.ParseMode.HTML
         )
 
     @app.on_message(filters.command("status") & filters.private)
@@ -136,7 +137,7 @@ def register_monitor_handlers(app: Client):
         user_id = message.from_user.id
         urls = await get_user_urls(user_id)
         if not urls:
-            await message.reply("📭 No URLs being monitored.", parse_mode="html")
+            await message.reply("📭 No URLs being monitored.", parse_mode=enums.ParseMode.HTML)
             return
 
         lines = ["📊 <b>Uptime Status</b>\n"]
@@ -149,7 +150,7 @@ def register_monitor_handlers(app: Client):
             code_str = str(code) if code else "—"
             lines.append(f"{icon} <b>{label}</b>\n   ↳ Status: <code>{code_str}</code> | Ping: <code>{ping_str}</code>")
 
-        await message.reply("\n\n".join(lines), parse_mode="html")
+        await message.reply("\n\n".join(lines), parse_mode=enums.ParseMode.HTML)
 
     @app.on_message(filters.command("ping") & filters.private)
     async def ping_cmd(client: Client, message: Message):
@@ -157,10 +158,10 @@ def register_monitor_handlers(app: Client):
             return
         args = message.text.split(maxsplit=1)
         if len(args) < 2:
-            await message.reply("Usage: /ping <url>", parse_mode="html")
+            await message.reply("Usage: /ping <url>", parse_mode=enums.ParseMode.HTML)
             return
         url = args[1].strip()
-        wait_msg = await message.reply(f"⏳ Pinging <code>{url}</code>...", parse_mode="html")
+        wait_msg = await message.reply(f"⏳ Pinging <code>{url}</code>...", parse_mode=enums.ParseMode.HTML)
         code, ms = await ping_url(url)
         if code:
             icon = "🟢" if 200 <= code < 400 else "🔴"
@@ -169,12 +170,12 @@ def register_monitor_handlers(app: Client):
                 f"🔗 URL: <code>{url}</code>\n"
                 f"📶 Status: <code>{code}</code>\n"
                 f"⚡ Response: <code>{ms}ms</code>",
-                parse_mode="html"
+                parse_mode=enums.ParseMode.HTML
             )
         else:
             await wait_msg.edit_text(
                 f"🔴 <b>Failed to reach</b> <code>{url}</code>\n\nThe URL is unreachable or timed out.",
-                parse_mode="html"
+                parse_mode=enums.ParseMode.HTML
             )
 
     @app.on_message(filters.command("remove") & filters.private)
@@ -184,11 +185,11 @@ def register_monitor_handlers(app: Client):
         user_id = message.from_user.id
         args = message.text.split(maxsplit=1)
         if len(args) < 2:
-            await message.reply("Usage: /remove <url>", parse_mode="html")
+            await message.reply("Usage: /remove <url>", parse_mode=enums.ParseMode.HTML)
             return
         url = args[1].strip()
         await remove_url_by_url(user_id, url)
-        await message.reply(f"✅ <b>Removed:</b> <code>{url}</code>", parse_mode="html")
+        await message.reply(f"✅ <b>Removed:</b> <code>{url}</code>", parse_mode=enums.ParseMode.HTML)
 
     # ─── Callbacks ───
 
@@ -202,7 +203,7 @@ def register_monitor_handlers(app: Client):
         await query.message.edit_caption(
             caption=f"📊 <b>Your Monitored URLs</b> — {len(urls)} total",
             reply_markup=url_list_keyboard(urls),
-            parse_mode="html"
+            parse_mode=enums.ParseMode.HTML
         )
 
     @app.on_callback_query(filters.regex(r"^url_page:(\d+)$"))
@@ -251,7 +252,7 @@ def register_monitor_handlers(app: Client):
                 ],
                 [InlineKeyboardButton("🔙 Back", callback_data="my_urls")]
             ]),
-            parse_mode="html"
+            parse_mode=enums.ParseMode.HTML
         )
 
     @app.on_callback_query(filters.regex(r"^pause_url:(.+)$"))
@@ -281,7 +282,7 @@ def register_monitor_handlers(app: Client):
                     [InlineKeyboardButton("➕ Add URL", callback_data="add_url_prompt"),
                      InlineKeyboardButton("🏠 Home", callback_data="home")]
                 ]),
-                parse_mode="html"
+                parse_mode=enums.ParseMode.HTML
             )
         else:
             await query.message.edit_reply_markup(reply_markup=url_list_keyboard(urls))
@@ -291,7 +292,7 @@ def register_monitor_handlers(app: Client):
         pending_add[query.from_user.id] = True
         await query.message.edit_caption(
             caption="📎 <b>Send me the URL to monitor:</b>\n\nExample: <code>https://yourbot.example.com</code>",
-            parse_mode="html",
+            parse_mode=enums.ParseMode.HTML,
             reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("❌ Cancel", callback_data="cancel_add")]])
         )
 
@@ -316,7 +317,7 @@ async def _process_add_url(client, message: Message, user_id: int, url: str):
     from bot.database.db import remove_url_by_url
 
     if not (url.startswith("http://") or url.startswith("https://")):
-        await message.reply("❌ URL must start with <code>http://</code> or <code>https://</code>", parse_mode="html")
+        await message.reply("❌ URL must start with <code>http://</code> or <code>https://</code>", parse_mode=enums.ParseMode.HTML)
         return
 
     premium = await is_premium(user_id)
@@ -326,11 +327,11 @@ async def _process_add_url(client, message: Message, user_id: int, url: str):
             f"🔒 <b>Free limit reached!</b>\n\n"
             f"Free users can monitor up to <b>{FREE_LIMIT} URLs</b>.\n"
             f"Contact <a href='https://t.me/Venuboyy'>@Venuboyy</a> to upgrade to Premium for unlimited URLs! 👑",
-            parse_mode="html"
+            parse_mode=enums.ParseMode.HTML
         )
         return
 
-    wait = await message.reply(f"⏳ Checking URL <code>{url}</code>...", parse_mode="html")
+    wait = await message.reply(f"⏳ Checking URL <code>{url}</code>...", parse_mode=enums.ParseMode.HTML)
     code, ms = await ping_url(url)
 
     await add_url(user_id, url)
@@ -341,7 +342,7 @@ async def _process_add_url(client, message: Message, user_id: int, url: str):
         f"📶 Status: <code>{code or 'unreachable'}</code>\n"
         f"⚡ Ping: <code>{ms or '—'}ms</code>\n\n"
         f"✅ I'll keep pinging this every few minutes.",
-        parse_mode="html",
+        parse_mode=enums.ParseMode.HTML,
         reply_markup=InlineKeyboardMarkup([
             [InlineKeyboardButton("📊 My URLs", callback_data="my_urls")]
         ])
@@ -371,5 +372,5 @@ async def _process_add_url_cb(client, query: CallbackQuery, user_id: int, url: s
         reply_markup=InlineKeyboardMarkup([
             [InlineKeyboardButton("📊 My URLs", callback_data="my_urls")]
         ]),
-        parse_mode="html"
+        parse_mode=enums.ParseMode.HTML
     )
