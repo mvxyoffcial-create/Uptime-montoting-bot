@@ -1,3 +1,4 @@
+from pyrogram import enums
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import UserNotParticipant
@@ -42,7 +43,7 @@ def register_info_handler(app: Client):
                 await message.reply_photo(
                     photo=photos[0].file_id,
                     caption=caption,
-                    parse_mode="html",
+                    parse_mode=enums.ParseMode.HTML,
                     reply_markup=InlineKeyboardMarkup([
                         [InlineKeyboardButton("👤 Profile", url=f"tg://user?id={user_id}")]
                     ])
@@ -54,7 +55,7 @@ def register_info_handler(app: Client):
         # No profile photo fallback
         await message.reply(
             caption,
-            parse_mode="html",
+            parse_mode=enums.ParseMode.HTML,
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("👤 Profile", url=f"tg://user?id={user_id}")]
             ])
