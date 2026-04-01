@@ -8,7 +8,10 @@ from pyrogram.types import (
     Message, CallbackQuery,
     InlineKeyboardMarkup, InlineKeyboardButton,
 )
-from pyrogram.types.bots_and_keyboards import LabeledPrice
+
+# LabeledPrice does not exist in pyrogram 2.0.106 — define it locally
+from collections import namedtuple
+LabeledPrice = namedtuple("LabeledPrice", ["label", "amount"])
 
 from script import script
 from config import ADMINS, PREMIUM_LOGS, STAR_PREMIUM_PLANS, SUBSCRIPTION_IMG, WELCOME_IMAGE
